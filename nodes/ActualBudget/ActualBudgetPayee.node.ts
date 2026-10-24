@@ -30,7 +30,7 @@ const payeeFields: INodeProperties[] = [
 		name: 'budgetId',
 		type: 'string',
 		default: '',
-		placeholder: 'budget-ID',
+		placeholder: 'budget ID',
 		description: 'Optional budget ID to load before payee operations',
 	},
 	{
@@ -92,19 +92,23 @@ export class ActualBudgetPayee implements INodeType {
 					case 'update': {
 						const payload = this.getNodeParameter('payload', itemIndex, '{}') as Record<string, unknown>;
 						const payeeId = payload.id as string | undefined;
-						if (!payeeId) throw new Error('A Payee ID is required to update a payee.');
+						if (!payeeId) {
+							throw new NodeOperationError(this.getNode(), 'A Payee ID is required to update a payee');
+						}
 						response = await actualApi.updatePayee(payeeId, payload);
 						break;
 					}
 					case 'delete': {
 						const payload = this.getNodeParameter('payload', itemIndex, '{}') as Record<string, unknown>;
 						const payeeId = payload.id as string | undefined;
-						if (!payeeId) throw new Error('A Payee ID is required to delete a payee.');
+						if (!payeeId) {
+							throw new NodeOperationError(this.getNode(), 'A Payee ID is required to delete a payee');
+						}
 						response = await actualApi.deletePayee(payeeId);
 						break;
 					}
 					default:
-						throw new Error(`Unsupported payee operation: ${operation}`);
+						throw new NodeOperationError(this.getNode(), `Unsupported payee operation: ${operation}`);
 				}
 
 				results.push(...toN8nItems(response));

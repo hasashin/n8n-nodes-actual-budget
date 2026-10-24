@@ -15,11 +15,11 @@ const budgetOperations: INodeProperties[] = [
 		type: 'options',
 		noDataExpression: true,
 		options: [
+			{ name: 'Get Budget Month', value: 'getBudgetMonth', action: 'Get a budget month' },
+			{ name: 'Get Budget Months', value: 'getBudgetMonths', action: 'Get budget months' },
 			{ name: 'Get Many', value: 'getAll', action: 'Get many budgets' },
 			{ name: 'Load', value: 'load', action: 'Load a budget' },
 			{ name: 'Sync', value: 'sync', action: 'Sync a budget' },
-			{ name: 'Get Budget Months', value: 'getBudgetMonths', action: 'Get budget months' },
-			{ name: 'Get Budget Month', value: 'getBudgetMonth', action: 'Get a budget month' },
 		],
 		default: 'getAll',
 	},
@@ -31,7 +31,7 @@ const budgetFields: INodeProperties[] = [
 		name: 'budgetId',
 		type: 'string',
 		default: '',
-		placeholder: 'budget-ID',
+		placeholder: 'budget ID',
 		description: 'The ID of the Actual budget to use',
 		displayOptions: {
 			show: {
@@ -106,13 +106,13 @@ export class ActualBudgetBudget implements INodeType {
 					case 'getBudgetMonth': {
 						const month = (this.getNodeParameter('month', itemIndex, '') as string).trim();
 						if (!month) {
-							throw new Error('A month is required for the Get Budget Month operation.');
+							throw new NodeOperationError(this.getNode(), 'A month is required for the Get Budget Month operation');
 						}
 						response = await actualApi.getBudgetMonth(month);
 						break;
 					}
 					default:
-						throw new Error(`Unsupported budget operation: ${operation}`);
+						throw new NodeOperationError(this.getNode(), `Unsupported budget operation: ${operation}`);
 				}
 
 				results.push(...toN8nItems(response));

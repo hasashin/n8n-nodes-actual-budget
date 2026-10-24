@@ -15,12 +15,12 @@ const transactionOperations: INodeProperties[] = [
 		type: 'options',
 		noDataExpression: true,
 		options: [
-			{ name: 'Get Many', value: 'getAll', action: 'Get many transactions' },
 			{ name: 'Create', value: 'create', action: 'Create a transaction' },
-			{ name: 'Update', value: 'update', action: 'Update a transaction' },
 			{ name: 'Delete', value: 'delete', action: 'Delete a transaction' },
+			{ name: 'Get Many', value: 'getAll', action: 'Get many transactions' },
 			{ name: 'Import', value: 'import', action: 'Import transactions' },
 			{ name: 'Merge', value: 'merge', action: 'Merge transactions' },
+			{ name: 'Update', value: 'update', action: 'Update a transaction' },
 		],
 		default: 'getAll',
 	},
@@ -32,7 +32,7 @@ const transactionFields: INodeProperties[] = [
 		name: 'budgetId',
 		type: 'string',
 		default: '',
-		placeholder: 'budget-ID',
+		placeholder: 'budget ID',
 		description: 'Optional budget ID to load before transaction operations',
 	},
 	{
@@ -40,7 +40,7 @@ const transactionFields: INodeProperties[] = [
 		name: 'accountId',
 		type: 'string',
 		default: '',
-		placeholder: 'account-ID',
+		placeholder: 'account ID',
 		description: 'The Actual account ID used for the transaction operation',
 		displayOptions: {
 			show: {
@@ -53,7 +53,7 @@ const transactionFields: INodeProperties[] = [
 		name: 'transactionId',
 		type: 'string',
 		default: '',
-		placeholder: 'transaction-ID',
+		placeholder: 'transaction ID',
 		description: 'The Actual transaction ID',
 		displayOptions: {
 			show: {
@@ -145,7 +145,9 @@ export class ActualBudgetTransaction implements INodeType {
 				switch (operation) {
 					case 'getAll': {
 						const accountId = (this.getNodeParameter('accountId', itemIndex, '') as string).trim();
-						if (!accountId) throw new Error('An Account ID is required to read transactions.');
+						if (!accountId) {
+							throw new NodeOperationError(this.getNode(), 'An Account ID is required to read transactions');
+						}
 						const startDate = normalizeDate(this.getNodeParameter('startDate', itemIndex, '') as string) ?? '';
 						const endDate = normalizeDate(this.getNodeParameter('endDate', itemIndex, '') as string) ?? '';
 						response = await actualApi.getTransactions(accountId, startDate, endDate);
@@ -153,7 +155,9 @@ export class ActualBudgetTransaction implements INodeType {
 					}
 					case 'create': {
 						const accountId = (this.getNodeParameter('accountId', itemIndex, '') as string).trim();
-						if (!accountId) throw new Error('An Account ID is required to add transactions.');
+						if (!accountId) {
+							throw new NodeOperationError(this.getNode(), 'An Account ID is required to add transactions');
+						}
 						const transactions = this.getNodeParameter('transactionsJson', itemIndex, '[]') as unknown;
 						const values = Array.isArray(transactions) ? transactions : [transactions];
 						response = await actualApi.addTransactions(accountId, values);
@@ -161,20 +165,26 @@ export class ActualBudgetTransaction implements INodeType {
 					}
 					case 'update': {
 						const transactionId = (this.getNodeParameter('transactionId', itemIndex, '') as string).trim();
-						if (!transactionId) throw new Error('A Transaction ID is required to update a transaction.');
+						if (!transactionId) {
+							throw new NodeOperationError(this.getNode(), 'A Transaction ID is required to update a transaction');
+						}
 						const payload = this.getNodeParameter('payload', itemIndex, '{}') as Record<string, unknown>;
 						response = await actualApi.updateTransaction(transactionId, payload);
 						break;
 					}
 					case 'delete': {
 						const transactionId = (this.getNodeParameter('transactionId', itemIndex, '') as string).trim();
-						if (!transactionId) throw new Error('A Transaction ID is required to delete a transaction.');
+						if (!transactionId) {
+							throw new NodeOperationError(this.getNode(), 'A Transaction ID is required to delete a transaction');
+						}
 						response = await actualApi.deleteTransaction(transactionId);
 						break;
 					}
 					case 'import': {
 						const accountId = (this.getNodeParameter('accountId', itemIndex, '') as string).trim();
-						if (!accountId) throw new Error('An Account ID is required to import transactions.');
+						if (!accountId) {
+							throw new NodeOperationError(this.getNode(), 'An Account ID is required to import transactions');
+						}
 						const transactions = this.getNodeParameter('transactionsJson', itemIndex, '[]') as unknown;
 						const values = Array.isArray(transactions) ? transactions : [transactions];
 						response = await actualApi.importTransactions(accountId, values);
@@ -182,15 +192,19 @@ export class ActualBudgetTransaction implements INodeType {
 					}
 					case 'merge': {
 						const transactionId = (this.getNodeParameter('transactionId', itemIndex, '') as string).trim();
-						if (!transactionId) throw new Error('A Transaction ID is required to merge transactions.');
+						if (!transactionId) {
+							throw new NodeOperationError(this.getNode(), 'A Transaction ID is required to merge transactions');
+						}
 						const payload = this.getNodeParameter('payload', itemIndex, '{}') as Record<string, unknown>;
 						const targetId = payload.targetId as string | undefined;
-						if (!targetId) throw new Error('A target transaction ID is required to merge transactions.');
+						if (!targetId) {
+							throw new NodeOperationError(this.getNode(), 'A target transaction ID is required to merge transactions');
+						}
 						response = await actualApi.mergeTransactions([transactionId, targetId]);
 						break;
 					}
 					default:
-						throw new Error(`Unsupported transaction operation: ${operation}`);
+						throw new NodeOperationError(this.getNode(), `Unsupported transaction operation: ${operation}`);
 				}
 
 				results.push(...toN8nItems(response));

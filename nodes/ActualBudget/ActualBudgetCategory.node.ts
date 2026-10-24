@@ -28,7 +28,7 @@ const categoryFields: INodeProperties[] = [
 		name: 'budgetId',
 		type: 'string',
 		default: '',
-		placeholder: 'budget-ID',
+		placeholder: 'budget ID',
 		description: 'Optional budget ID to load before category operations',
 	},
 	{
@@ -49,7 +49,7 @@ const categoryFields: INodeProperties[] = [
 		name: 'categoryId',
 		type: 'string',
 		default: '',
-		placeholder: 'category-ID',
+		placeholder: 'category ID',
 		description: 'The category to update',
 		displayOptions: {
 			show: {
@@ -113,13 +113,13 @@ export class ActualBudgetCategory implements INodeType {
 						const categoryId = (this.getNodeParameter('categoryId', itemIndex, '') as string).trim();
 						const amount = this.getNodeParameter('amount', itemIndex, 0) as number;
 						if (!month || !categoryId) {
-							throw new Error('Month and Category ID are required to set the budget amount.');
+							throw new NodeOperationError(this.getNode(), 'Month and Category ID are required to set the budget amount');
 						}
 						response = await actualApi.setBudgetAmount(month, categoryId, amount);
 						break;
 					}
 					default:
-						throw new Error(`Unsupported category operation: ${operation}`);
+						throw new NodeOperationError(this.getNode(), `Unsupported category operation: ${operation}`);
 				}
 
 				results.push(...toN8nItems(response));

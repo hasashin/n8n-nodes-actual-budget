@@ -15,11 +15,11 @@ const accountOperations: INodeProperties[] = [
 		type: 'options',
 		noDataExpression: true,
 		options: [
-			{ name: 'Get Many', value: 'getAll', action: 'Get many accounts' },
 			{ name: 'Create', value: 'create', action: 'Create an account' },
-			{ name: 'Update', value: 'update', action: 'Update an account' },
 			{ name: 'Delete', value: 'delete', action: 'Delete an account' },
 			{ name: 'Get Balance', value: 'getBalance', action: 'Get an account balance' },
+			{ name: 'Get Many', value: 'getAll', action: 'Get many accounts' },
+			{ name: 'Update', value: 'update', action: 'Update an account' },
 		],
 		default: 'getAll',
 	},
@@ -31,7 +31,7 @@ const accountFields: INodeProperties[] = [
 		name: 'budgetId',
 		type: 'string',
 		default: '',
-		placeholder: 'budget-ID',
+		placeholder: 'budget ID',
 		description: 'Optional budget ID to load before account operations',
 	},
 	{
@@ -39,7 +39,7 @@ const accountFields: INodeProperties[] = [
 		name: 'accountId',
 		type: 'string',
 		default: '',
-		placeholder: 'account-ID',
+		placeholder: 'account ID',
 		description: 'The Actual account ID',
 		displayOptions: {
 			show: {
@@ -105,25 +105,31 @@ export class ActualBudgetAccount implements INodeType {
 					}
 					case 'update': {
 						const accountId = (this.getNodeParameter('accountId', itemIndex, '') as string).trim();
-						if (!accountId) throw new Error('An Account ID is required to update an account.');
+						if (!accountId) {
+							throw new NodeOperationError(this.getNode(), 'An Account ID is required to update an account');
+						}
 						const payload = this.getNodeParameter('payload', itemIndex, '{}') as Record<string, unknown>;
 						response = await actualApi.updateAccount(accountId, payload);
 						break;
 					}
 					case 'delete': {
 						const accountId = (this.getNodeParameter('accountId', itemIndex, '') as string).trim();
-						if (!accountId) throw new Error('An Account ID is required to delete an account.');
+						if (!accountId) {
+							throw new NodeOperationError(this.getNode(), 'An Account ID is required to delete an account');
+						}
 						response = await actualApi.deleteAccount(accountId);
 						break;
 					}
 					case 'getBalance': {
 						const accountId = (this.getNodeParameter('accountId', itemIndex, '') as string).trim();
-						if (!accountId) throw new Error('An Account ID is required to get the account balance.');
+						if (!accountId) {
+							throw new NodeOperationError(this.getNode(), 'An Account ID is required to get the account balance');
+						}
 						response = await actualApi.getAccountBalance(accountId, undefined);
 						break;
 					}
 					default:
-						throw new Error(`Unsupported account operation: ${operation}`);
+						throw new NodeOperationError(this.getNode(), `Unsupported account operation: ${operation}`);
 				}
 
 				results.push(...toN8nItems(response));
