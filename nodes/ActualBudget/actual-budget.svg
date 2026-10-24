@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Actual Budget icon">
+  <rect width="64" height="64" rx="12" fill="#1C3B6D"/>
+  <path d="M18 18h28v6H18zm0 11h28v6H18zm0 11h18v6H18zm0 11h28v6H18z" fill="#F5F7FF"/>
+  <circle cx="46" cy="33" r="8" fill="#78C4FF"/>
+  <path d="M46 25v16M38 33h16" stroke="#1C3B6D" stroke-width="2" stroke-linecap="round"/>
+</svg>
