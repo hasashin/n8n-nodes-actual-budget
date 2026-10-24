@@ -4,8 +4,13 @@
   "description": "Self-hosted n8n community node for Actual Budget using the official @actual-app/api SDK.",
   "license": "MIT",
   "homepage": "https://github.com/hasashin/n8n-nodes-actual-budget",
-  "keywords": ["n8n-community-node-package"],
-  "author": { "name": "Dominik Hazak", "email": "dominik.hazak@gmail.com" },
+  "keywords": [
+    "n8n-community-node-package"
+  ],
+  "author": {
+    "name": "Dominik Hazak",
+    "email": "dominik.hazak@gmail.com"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/hasashin/n8n-nodes-actual-budget.git"
@@ -19,11 +24,15 @@
     "release": "n8n-node release",
     "prepublishOnly": "n8n-node prerelease"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "n8n": {
     "n8nNodesApiVersion": 1,
     "strict": false,
-    "credentials": ["dist/credentials/ActualBudgetApi.credentials.js"],
+    "credentials": [
+      "dist/credentials/ActualBudgetApi.credentials.js"
+    ],
     "nodes": [
       "dist/nodes/ActualBudget/ActualBudgetBudget.node.js",
       "dist/nodes/ActualBudget/ActualBudgetAccount.node.js",
@@ -33,11 +42,14 @@
     ]
   },
   "devDependencies": {
+    "@actual-app/api": "^26.10.0",
     "@n8n/node-cli": "*",
     "eslint": "9.32.0",
     "prettier": "3.6.2",
     "release-it": "^21.1.0",
     "typescript": "5.9.2"
   },
-  "peerDependencies": { "n8n-workflow": "*" }
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  }
 }
