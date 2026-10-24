@@ -39,6 +39,8 @@
     "release-it": "^21.1.0",
     "typescript": "5.9.2"
   },
-  "peerDependencies": { "n8n-workflow": "*" },
-  "dependencies": { "@actual-app/api": "^26.10.0" }
+  "peerDependencies": { 
+    "n8n-workflow": "*", 
+    "@actual-app/api": "^26.10.0" 
+  }
 }
