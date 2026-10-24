@@ -6,7 +6,7 @@ import type {
 	INodeTypeDescription,
 } from 'n8n-workflow';
 import { NodeConnectionTypes, NodeOperationError } from 'n8n-workflow';
-import { ensureBudgetLoaded, getActualClient, toN8nItems } from './actualBudgetHelpers';
+import { ensureBudgetLoaded, getActualBudgetPassword, getActualClient, toN8nItems } from './actualBudgetHelpers';
 
 const budgetOperations: INodeProperties[] = [
 	{
@@ -87,7 +87,8 @@ export class ActualBudgetBudget implements INodeType {
 				const operation = this.getNodeParameter('operation', itemIndex, 'getAll') as string;
 				const budgetId = (this.getNodeParameter('budgetId', itemIndex, '') as string).trim();
 				const actualApi = await getActualClient(this);
-				const activeBudgetId = operation === 'getAll' ? budgetId : await ensureBudgetLoaded(actualApi, budgetId);
+				const budgetPassword = await getActualBudgetPassword(this);
+				const activeBudgetId = operation === 'getAll' ? budgetId : await ensureBudgetLoaded(actualApi, budgetId, budgetPassword);
 
 				let response: unknown;
 				switch (operation) {

@@ -29,6 +29,16 @@ export class ActualBudgetApi implements ICredentialType {
 			description: 'Password used to authenticate against the Actual server.',
 		},
 		{
+			displayName: 'Budget Password',
+			name: 'budgetPassword',
+			type: 'string',
+			typeOptions: {
+				password: true,
+			},
+			default: '',
+			description: 'Optional password for encrypted Actual budget files. This is separate from the server login password.',
+		},
+		{
 			displayName: 'Session Token',
 			name: 'sessionToken',
 			type: 'string',

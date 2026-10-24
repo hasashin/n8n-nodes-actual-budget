@@ -5,10 +5,12 @@ import type {
 	INodeExecutionData,
 } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
+import { resolveBudgetForUse } from './actualBudgetBudgetResolver';
 
 export type ActualBudgetCredentials = {
 	serverUrl?: string;
 	password?: string;
+	budgetPassword?: string;
 	sessionToken?: string;
 	dataDir?: string;
 	budgetId?: string;
@@ -39,16 +41,17 @@ export async function getActualClient(executionContext: IExecuteFunctions): Prom
 	return Actual;
 }
 
-export async function ensureBudgetLoaded(actual: typeof Actual, budgetId?: string): Promise<string> {
-	const budgets = await actual.getBudgets();
-	const defaultBudgetId = budgetId?.trim() || budgets.find((budget: { id?: string } | null | undefined) => Boolean(budget?.id))?.id;
+export async function getActualBudgetPassword(executionContext: IExecuteFunctions): Promise<string> {
+	const credentials = (await executionContext.getCredentials('actualBudgetApi')) as ActualBudgetCredentials;
+	return credentials.budgetPassword?.trim() ?? '';
+}
 
-	if (!defaultBudgetId) {
-		throw new Error('No Actual budgets were found. Create a budget before using this node.');
-	}
-
-	await actual.loadBudget(defaultBudgetId);
-	return defaultBudgetId;
+export async function ensureBudgetLoaded(
+	actual: typeof Actual,
+	budgetId?: string,
+	budgetPassword?: string,
+): Promise<string> {
+	return resolveBudgetForUse(actual, budgetId, budgetPassword);
 }
 
 export function normalizeDate(dateValue: string | undefined): string | undefined {
